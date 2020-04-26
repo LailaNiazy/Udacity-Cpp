@@ -3,31 +3,44 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
+#include "linux_parser.h"
 #include "process.h"
 
 using std::string;
 using std::to_string;
 using std::vector;
 
-// TODO: Return this process's ID
-int Process::Pid() { return 0; }
+// Constructor
+Process::Process(int p){ 
+    pid_ = p;
+    cmd_ = LinuxParser::Command(pid_);
+    user_ = LinuxParser::User(pid_);
+    }
 
-// TODO: Return this process's CPU utilization
-float Process::CpuUtilization() { return 0; }
+// Return this process's ID
+int Process::Pid() { return pid_; }
 
-// TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+// Return this process's CPU utilization
+float Process::CpuUtilization() const { 
+    //uptime of the system
+    long upTime = LinuxParser::UpTime();
+    long total_time = LinuxParser::ActiveJiffies(pid_);
+    long start_time = LinuxParser::StartTime(pid_);
+    float seconds = upTime - (start_time / sysconf(_SC_CLK_TCK));
+return ((total_time /sysconf(_SC_CLK_TCK) ) / seconds);}
 
-// TODO: Return this process's memory utilization
-string Process::Ram() { return string(); }
+// Return the command that generated this process
+string Process::Command() { return cmd_; }
 
-// TODO: Return the user (name) that generated this process
-string Process::User() { return string(); }
+// Return this process's memory utilization
+string Process::Ram() { return LinuxParser::Ram(Pid());}
 
-// TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return 0; }
+// Return the user (name) that generated this process
+string Process::User() {return user_;}
 
-// TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+// Return the age of this process (in seconds)
+long int Process::UpTime() { return LinuxParser::UpTime(Pid());}
+
+// Overload the "less than" comparison operator for Process objects
+bool Process::operator<(Process const& a) const { 
+    return (this->CpuUtilization() > a.CpuUtilization()); }
