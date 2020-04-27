@@ -72,7 +72,7 @@ vector<int> LinuxParser::Pids() {
 // Read and return the system memory utilization
 //total used memory = Memtotal - (MemFree + Buffers)
 float LinuxParser::MemoryUtilization() { 
-  float memory[4] = {};
+  float memory[4] = {0,0,0,0};
   string name, line = {};
   std::ifstream stream(kProcDirectory + kMeminfoFilename);
   if (stream.is_open()) {
@@ -81,9 +81,10 @@ float LinuxParser::MemoryUtilization() {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       linestream >> name >> memory[i];}
-      stream.close();}
-    float used = memory[0]-(memory[1]+memory[3]);
-  return used/memory[0];}
+      float used = memory[0]-(memory[1]+memory[3]);
+      stream.close();
+      return used/memory[0];}
+  return 0;}
 
 //Read and return the system uptime in seconds
 long LinuxParser::UpTime(){ 
@@ -164,6 +165,7 @@ vector<string> LinuxParser::CpuUtilization() {
         cpu.push_back(value);
       }
     stream.close();
+    return cpu;
     } 
   }
   return cpu;}
@@ -180,7 +182,7 @@ int LinuxParser::TotalProcesses() {
         if (key == "processes"){
           stream.close();
           return value;}}}}
-  return 0;}
+  return value;}
 
 // Read and return the number of running processes
 int LinuxParser::RunningProcesses() { 
@@ -194,7 +196,7 @@ int LinuxParser::RunningProcesses() {
         if (key == "procs_running"){
           stream.close();
           return value;}}}}
-  return 0;}
+  return value;}
 
 // Read and return the command associated with a process
 string LinuxParser::Command(int pid) {  
@@ -222,6 +224,7 @@ string LinuxParser::Ram(int pid) {
           value /= 1000;
           ram = to_string(value);
           stream.close();
+          return ram;
         }
       }
     }
@@ -245,7 +248,7 @@ string LinuxParser::Uid(int pid) {
       }
     }
   }
-  return string();}
+  return uid;}
 
 // Read and return the user associated with a process
 string LinuxParser::User(int pid) { 
@@ -264,7 +267,7 @@ string LinuxParser::User(int pid) {
       }
     }
   }
-  return string();}
+  return user;}
 
 //Read and return the uptime of a process
 long LinuxParser::UpTime(int pid) {
@@ -277,6 +280,7 @@ long LinuxParser::UpTime(int pid) {
         std::istringstream linestream(line);
         linestream >> time;
     }
+    time = time/sysconf(_SC_CLK_TCK);
     stream.close();
   }
-  return time/sysconf(_SC_CLK_TCK);}
+  return time;}
