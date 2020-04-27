@@ -20,9 +20,9 @@ class Process {
   
   // Declare any necessary private members
  private:
-    int pid_;
-    std::string cmd_;
-    std::string user_;
+    int pid_ = 0;
+    std::string cmd_ = {};
+    std::string user_ = {};
 };
 
 #endif
