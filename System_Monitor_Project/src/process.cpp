@@ -2,19 +2,17 @@
 #include <cctype>
 #include <sstream>
 #include <string>
-#include <vector>
 #include "linux_parser.h"
 #include "process.h"
 
 using std::string;
-using std::to_string;
-using std::vector;
+
 
 // Constructor
 Process::Process(int p){ 
     pid_ = p;
-    cmd_ = LinuxParser::Command(pid_);
-    user_ = LinuxParser::User(pid_);
+    cmd_ = LinuxParser::Command(Pid());
+    user_ = LinuxParser::User(Pid());
     }
 
 // Return this process's ID

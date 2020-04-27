@@ -1,12 +1,8 @@
 #include "processor.h"
 #include "linux_parser.h"
-#include <vector>
-#include <string>
-#include "unistd.h"
-#include <iostream>
-using std::string;
-using std::vector;
-using std::stof;
+
+
+
 
 //Constructor for the processor
 Processor::Processor(){

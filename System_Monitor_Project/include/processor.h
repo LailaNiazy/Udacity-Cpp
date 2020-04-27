@@ -8,8 +8,8 @@ class Processor {
 
   // Declare any necessary private members
  private:
-   long prevTotal_ = 0;
-   long prevActive_ = 0;
+   long prevTotal_ = 0.0;
+   long prevActive_ = 0.0;
 };
 
 #endif
